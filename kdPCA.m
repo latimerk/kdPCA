@@ -108,5 +108,5 @@ for cc = 1:D
 end
 
 
-X_hat = sum(sum(X_hat_d(:,:,:,:),4),3);
-X_star_hat = sum(sum(X_star_hat_d(:,:,:,:),4),3);
+% X_hat = sum(sum(X_hat_d(:,:,:,:),4),3);
+% X_star_hat = sum(sum(X_star_hat_d(:,:,:,:),4),3);

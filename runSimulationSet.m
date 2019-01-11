@@ -39,18 +39,22 @@ if(saveResults)
         matfig2fyp(gcf,sprintf('%s/scaledSim_1_raw.fyp',figDir));
         figure(2);
         matfig2fyp(gcf,sprintf('%s/scaledSim_2_raw.fyp',figDir));
+        figure(3);
+        matfig2fyp(gcf,sprintf('%s/scaledSim_3_raw.fyp',figDir));
     else
         drawnow;
         figure(1);
         saveas(gcf,sprintf('%s/scaledSim_1_raw.eps',figDir),'epsc');
         figure(2);
         saveas(gcf,sprintf('%s/scaledSim_2_raw.eps',figDir),'epsc');
+        figure(3);
+        saveas(gcf,sprintf('%s/scaledSim_3_raw.eps',figDir),'epsc');
     end
 
     save('ResultsSummary_scaled.mat','ResultsSummary_scaled');
 end
 %%
-rng(12082018);
+rng(12172018); 
 
 figs_rotatedSimulation;
 if(saveResults)
@@ -60,12 +64,16 @@ if(saveResults)
         matfig2fyp(gcf,sprintf('%s/rotatedSim_1_raw.fyp',figDir));
         figure(2);
         matfig2fyp(gcf,sprintf('%s/rotatedSim_2_raw.fyp',figDir));
+        figure(3);
+        matfig2fyp(gcf,sprintf('%s/rotatedSim_3_raw.fyp',figDir));
     else
         drawnow;
         figure(1);
         saveas(gcf,sprintf('%s/rotatedSim_1_raw.eps',figDir),'epsc');
         figure(2);
         saveas(gcf,sprintf('%s/rotatedSim_2_raw.eps',figDir),'epsc');
+        figure(3);
+        saveas(gcf,sprintf('%s/rotatedSim_3_raw.eps',figDir),'epsc');
     end
 
     save('ResultsSummary_rotated.mat','ResultsSummary_rotated');
