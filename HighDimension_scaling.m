@@ -1,19 +1,19 @@
-rng(20190512);
+rng(20190520);
 saveFig = false;
 
 D =  6;
 N = 50;
 T_0 = 10;
 T = T_0*D;
-NE = 8;
+NE = 9;
 
-ms = 6;
+ms  = 6;
 lw  = 1.5;
 lw2 = 1;
 
 lambda = 1;
 lambda_k = 1;
-lengthScale = 5;
+lengthScale = 8;
 R = 4;
 
 fontSize_axis = 10;
@@ -51,11 +51,11 @@ X_0 = X_0 - ones(1,D)*T_0/2;
 
 
       
-scales = [linspace(0.5 ,2   ,D);  
-          linspace(0.75,1.5 ,D);  
+scales = [linspace(0.5 ,1.5   ,D);  
+          linspace(0.75,1.25 ,D);  
           linspace(1   ,1   ,D);  
-          linspace(1.5 ,0.75,D);  
-          linspace(2   ,0.5 ,D)];
+          linspace(1.25 ,0.75,D);  
+          linspace(1.5   ,0.5 ,D)];
       
       
 % scales = repmat([0.5 0.75 1 1.5 2]',[1 D]);
@@ -113,6 +113,12 @@ X_gamma(:,:,3) = Xs-sum(X_gamma(:,:,1:2),3);
 [COEFF1, SCORE1, LATENT1, TSQUARED1, EXPLAINED1,MU1] = pca(Xs);
 
 SCORE1_star = (Xs_star-MU1)*COEFF1;
+EXPLAINED1_star = nan(size(SCORE1_star,2),1);
+for ii = 1:length(EXPLAINED1_star)
+    Xs_star_hat = SCORE1_star(:,ii)*COEFF1(:,ii)' + MU1;
+    
+    EXPLAINED1_star(ii) = 100*(1-sum(sum((Xs_star - Xs_star_hat).^2))./sum(sum((Xs_star-mean(Xs_star)).^2)));
+end
 
 
 [results_kdPCA.X_d,results_kdPCA.X_star_d,results_kdPCA.X_hat_d,results_kdPCA.X_star_hat_d] = kdPCA_sqExp(Xs,X_gamma,lambda_k,lengthScale,Xs_star,R);
@@ -163,11 +169,14 @@ for gg = 1:size(sets,1)
     hold off
 end
 subplot(3,4,4)
-plot(1:min(NE,length(EXPLAINED1)),EXPLAINED1(1:min(NE,length(EXPLAINED1))),'o-');
+hold on
+plot(1:min(NE,length(EXPLAINED1_star)),EXPLAINED1_star(1:min(NE,length(EXPLAINED1_star))),'o-','color',[0.7 0.7 0.7],'markerfacecolor',[0.7 0.7 0.7]);
+plot(1:min(NE,length(EXPLAINED1)),EXPLAINED1(1:min(NE,length(EXPLAINED1))),'ko-','markerfacecolor',[0 0 0]);
 xlabel('PC','FontSize',fontSize_label);
-ylabel('% Variance Explained','FontSize',fontSize_label);
+ylabel('explained variance (%)','FontSize',fontSize_label);
 set(gca,'TickDir','out','box','off','fontSize',fontSize_axis);
 xlim([1 min(NE,length(EXPLAINED1))]);
+hold off
 
 lims = [-7.5  8.5;
         -4.5 4;
@@ -183,9 +192,6 @@ for gg = 1:3
     
     min_c = min(min(min(L_star(:,1:2))),min(min(L(:,1:2))));
     max_c = max(max(max(L_star(:,1:2))),max(max(L(:,1:2))));
-    fprintf('gg = %d\n',gg)
-    fprintf('   min = %.2f\n',min_c);
-    fprintf('   max = %.2f\n',max_c);
 
     colors_c = zeros(C,3);
     colors_c_star = zeros(C_star,3);
@@ -216,6 +222,18 @@ for gg = 1:3
     
     hold off
 end
+subplot(3,4,4+4);
+hold on
+ps_mu = 100*(1-squeeze(sum(sum((Xs-results_dPCA.X_hat_d(:,:,1,:)).^2)))./sum(sum((Xs - mean(Xs)).^2)));
+ps_mu_star = 100*(1-squeeze(sum(sum((Xs_star-results_dPCA.X_star_hat_d(:,:,1,:)).^2)))./sum(sum((Xs_star - mean(Xs_star)).^2)));
+plot([1 4 7],ps_mu,'o','MarkerFaceColor',[0 0 0],'Color',[0 0 0])
+plot([1 4 7]+0.5,ps_mu_star,'o','MarkerFaceColor',[0.7 0.7 0.7],'Color',[0.7 0.7 0.7]);
+
+xlabel('first component','FontSize',fontSize_label);
+ylabel('explained variance (%)','FontSize',fontSize_label);
+set(gca,'TickDir','out','box','off','FontSize',fontSize_axis);
+set(gca,'XTick',[1.5 4.5 7.5],'XTickLabel',{'time','stimulus','interaction'});
+hold off
 
 lims = [-7 8;
         -3 3;
@@ -237,9 +255,6 @@ for gg = 1:3
     
     min_c = min(min(min(L_star(:,1:2))),min(min(L(:,1:2))));
     max_c = max(max(max(L_star(:,1:2))),max(max(L(:,1:2))));
-    fprintf('gg = %d\n',gg)
-    fprintf('   min = %.2f\n',min_c);
-    fprintf('   max = %.2f\n',max_c);
     for ii = 1:C
         tts = (1:T) + (ii-1)*T;
         pp = plot(L(tts,1),L(tts,2),'-','LineWidth',lw);
@@ -264,6 +279,18 @@ for gg = 1:3
     ylim(lims(gg,:));
     hold off
 end
+subplot(3,4,8+4);
+hold on
+ps_mu = 100*(1-squeeze(sum(sum((Xs-results_kdPCA.X_hat_d(:,:,1,:)).^2)))./sum(sum((Xs - mean(Xs)).^2)));
+ps_mu_star = 100*(1-squeeze(sum(sum((Xs_star-results_kdPCA.X_star_hat_d(:,:,1,:)).^2)))./sum(sum((Xs_star - mean(Xs_star)).^2)));
+plot([1 4 7],ps_mu,'o','MarkerFaceColor',[0 0 0],'Color',[0 0 0])
+plot([1 4 7]+0.5,ps_mu_star,'o','MarkerFaceColor',[0.7 0.7 0.7],'Color',[0.7 0.7 0.7]);
+
+xlabel('first component','FontSize',fontSize_label);
+ylabel('explained variance (%)','FontSize',fontSize_label);
+set(gca,'TickDir','out','box','off','FontSize',fontSize_axis);
+set(gca,'XTick',[1.5 4.5 7.5],'XTickLabel',{'time','stimulus','interaction'});
+hold off
 
 if(saveFig)
     set(gcf,'PaperSize',[12 9],'PaperPosition',[0 0 12 9]);
