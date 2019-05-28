@@ -1,12 +1,14 @@
 rng(12192018);
-N = 20;
+N = 40;
 
 saveResults = false;
 figDir = 'tex/figs_src';
+cRange = [-2.0 2.0];
+zRange = [0 4];
 
-
-rRanges = [0    1;
-           1.5 2.5];
+rRanges = [0    0.5;
+           1.0 2.0];
+       
 M = size(rRanges,1);
        
 rs = zeros(N,M);
@@ -19,7 +21,7 @@ psis = rand(N,M)*2*pi;
 
 xs = cos(psis).*rs;
 ys = sin(psis).*rs;
-zs = sqrt(xs.^2+ys.^2);
+zs = (xs.^2+ys.^2);
 
 
 figure(1);
@@ -35,7 +37,7 @@ mm = {'o','x'};
       
 
 
-subplot(1,2,1)
+subplot(2,2,1)
 hold on
 for ii = 1:M
     plot(xs(:,ii),ys(:,ii),mm{ii},'Color',colors(ii,:),'MarkerSize',ms);
@@ -44,15 +46,35 @@ end
 title('original space: ','FontSize',fontSize_title);
 xlabel('x','FontSize',fontSize_label);
 ylabel('y','FontSize',fontSize_label);
-set(gca,'TickDir','out','box','off','FontSize',fontSize_axis);
+set(gca,'TickDir','out','box','off','FontSize',fontSize_axis,'XTick',[-2 0 2],'YTick',[-2 0 2]);
 axis equal
 axis square
-xlim([-2.5 2.5]);
-ylim([-2.5 2.5]);
+xlim(cRange);
+ylim(cRange);
+hold off
+
+subplot(2,2,3);
+hold on
+
+[~, SCORE] = pca([xs(:) ys(:)]);
+pca_xs = reshape(SCORE(:,1),[],M);
+pca_ys = reshape(SCORE(:,2),[],M);
+for ii = 1:M
+    plot(pca_xs(:,ii),pca_ys(:,ii),mm{ii},'Color',colors(ii,:),'MarkerSize',ms);
+end
+
+xlabel('PC 1','FontSize',fontSize_label);
+ylabel('PC 2','FontSize',fontSize_label);
+
+set(gca,'TickDir','out','box','off','FontSize',fontSize_axis,'XTick',[-2 0 2],'YTick',[-2 0 2]);
+axis equal
+axis square
+xlim(cRange);
+ylim(cRange);
 hold off
 
 
-subplot(1,2,2)
+subplot(2,2,2)
 hold on
 
 for ii = 1:M
@@ -63,15 +85,37 @@ end
 title('higher dimensional space: ','FontSize',fontSize_title);
 xlabel('x','FontSize',fontSize_label);
 ylabel('y','FontSize',fontSize_label);
-zlabel('\sqrt{x^2 + y^2}','FontSize',fontSize_label);
-set(gca,'TickDir','out','box','off','FontSize',fontSize_axis);
-set(gca,'CameraPosition',[-24.2590 -27.4869 7.6523],'CameraTarget',[-0.1774 0.0727 1.2500]);
+zlabel('x^2 + y^2','FontSize',fontSize_label);
+set(gca,'TickDir','out','box','off','FontSize',fontSize_axis,'XTick',[-2 0 2],'YTick',[-2 0 2],'ZTick',[0 2 4]);
+set(gca,'CameraPosition',[-22.9958  -24.1920   11.2705],'CameraTarget',[0 0 2]);
 axis equal
 axis square
-xlim([-2.5 2.5]);
-ylim([-2.5 2.5]);
-zlim([0 2.5]);
+xlim(cRange);
+ylim(cRange);
+zlim(zRange);
 hold off
+
+
+subplot(2,2,4);
+hold on
+
+[~, SCORE] = pca([xs(:) ys(:) zs(:)]);
+kpca_xs = reshape(SCORE(:,1),[],M);
+kpca_ys = reshape(SCORE(:,2),[],M);
+for ii = 1:M
+    plot(kpca_xs(:,ii),kpca_ys(:,ii),mm{ii},'Color',colors(ii,:),'MarkerSize',ms);
+end
+
+xlabel('PC 1','FontSize',fontSize_label);
+ylabel('PC 2','FontSize',fontSize_label);
+
+set(gca,'TickDir','out','box','off','FontSize',fontSize_axis,'XTick',[-2 0 2],'YTick',[-2 0 2]);
+axis equal
+axis square
+xlim(cRange);
+ylim(cRange);
+hold off
+
 
 if(saveResults)
     saveas(gcf,sprintf('%s/kernelDemo_raw.eps',figDir),'epsc');
