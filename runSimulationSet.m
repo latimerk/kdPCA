@@ -1,8 +1,8 @@
-rng(12122018);
+
 N = 50;
 
-saveResults = false;
-useFigureComposer = false;
+saveResults = true;
+useFigureComposer = true;
 figDir = 'tex/figs_src';
 mkdir(figDir);
 
@@ -10,6 +10,7 @@ if(useFigureComposer)
     addpath ~/FigureComposer/matlab %saves our figures using FigureComposer/DataNav format
 end
 
+rng(12122018);
 figs_plainSimulation;
 if(saveResults)
     if(useFigureComposer)
@@ -54,9 +55,10 @@ if(saveResults)
     save('ResultsSummary_scaled.mat','ResultsSummary_scaled');
 end
 %%
-rng(12172018); 
+rng(04282019); 
 
 figs_rotatedSimulation;
+
 if(saveResults)
     if(useFigureComposer)
         drawnow;

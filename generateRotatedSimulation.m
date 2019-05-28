@@ -3,8 +3,10 @@ function [X,X_gamma,X_star,T,L,L_star] = generateRotatedSimulation(N)
 T = 9;
 % angles = [0 pi pi*3/2 ];
 % angles2 = pi/2;
-angles = [0 -pi/2 pi  pi/2];
-angles2 = [-pi/4 -pi*5/4];% pi*3/2];
+
+angles_all = linspace(0,-pi,6);
+angles = linspace(0,-3/2*pi,4);%angles_all([1 3 4 6]);
+angles2 = [mean(angles([1 2])) mean(angles([3 4]))];angles_all([2 5]);
 % angles = [0 pi/2  ];
 % angles2 = [pi];% pi*3/2];
 C = length(angles);
@@ -41,7 +43,7 @@ for ii = 1:C
             R = [cos(aa) -sin(aa); sin(aa) cos(aa)];
             L(jj+(ii-1)*T,:) = L(jj,:)*R ;
         else
-            L(jj+(ii-1)*T,:) = [x y]*0.25;
+            L(jj+(ii-1)*T,:) = [x y]*0.5;
         end
     end
 end
